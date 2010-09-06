@@ -1,0 +1,376 @@
+<?php
+/**
+ * Copyright 2009-2010, Cake Development Corporation (http://cakedc.com)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright Copyright 2009-2010, Cake Development Corporation (http://cakedc.com)
+ * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+
+/**
+ * Problem Model
+ *
+ * @package problems
+ * @subpackage problems.models
+ */
+class Problem extends AppModel {
+
+/**
+ * Name
+ *
+ * @var string $name
+ */
+	public $name = 'Problem';
+
+/**
+ * modelTypes
+ *
+ * @var string
+ */
+	public $modelTypes = array();
+
+/**
+ * Types
+ *
+ * @var string The possible problem types
+ */
+	public $types = array();
+
+/**
+ * Different offensive states: ignore, yes, no
+ *
+ * @see Problem::__construct()
+ * @var array
+ */
+	public $offensiveStatuses = array();
+
+/**
+ * Validation parameters
+ *
+ * @var array
+ */
+	public $validate = array();
+
+/**
+ * Custom find methods to use
+ *
+ * @var array
+ */
+	public $_findMethods = array('totals' => true);
+
+/**
+ * Constructor
+ *
+ * @param mixed $id Model ID
+ * @param string $table Table name
+ * @param string $ds Datasource
+ */
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+		$this->validate = array(
+			'user_id' => array(
+				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __('Please enter a User', true))),
+			'foreign_key' => array(
+				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __('Please select item', true))),
+			'type' => array(
+				'inList' => array('rule' => array('validType'), 'required' => false, 'allowEmpty' => true, 'message' => __('Please enter a valid problem type', true))),
+			'description' => array(
+				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __('Please enter a description of the problem.', true))),
+			'offensive' => array(
+				'boolean' => array('rule' => array('numeric'), 'required' => true, 'allowEmpty' => false)));
+
+		$this->offensiveStatuses = array(
+			-1 => __('Ignore', true),
+			0 => __('No', true),
+			1 => __('Yes', true));
+
+		$this->types = array(
+			'spam' => __d('problems', 'Spam', true),
+			'sexual' => __d('problems', 'Sexual Content', true),
+			'insult_racism' => __d('problems', 'Insult/Racism', true),
+			'stolen' => __d('problems', 'Stolen Content', true),
+			'other' => __d('problems', 'Other', true));
+	}
+
+/**
+ * Adds a new record to the database
+ *
+ * @param string $foreignKey, object id
+ * @param string $userId, user id
+ * @param array post data, should be Contoller->data
+ * @return array
+ */
+	public function add($model, $foreignKey = null, $userId = null, $data = null) {
+		if (!in_array($model, $this->modelTypes)) {
+			throw new OutOfBoundsException(__('Could not save the Problem of unallowed type.', true));;
+		}
+
+		$options = array(
+			'contain' => array(),
+			'conditions' => array(
+				$this->alias . '.foreign_key' => $foreignKey,
+				$this->alias . '.model' => $model,
+				$this->alias . '.user_id' => $userId));
+		if (!empty($data['Problem']['type'])) {
+			$options['conditions'][$this->alias . '.type'] = $data['Problem']['type'];
+		}
+		$problem = $this->find('count', $options);
+
+		if (!empty($problem) && !empty($data['Problem']['type'])) {
+			$objectHumanName = Inflector::humanize(Inflector::underscore($model));
+			throw new LogicException(sprintf(__('You have already reported this %s!', true), __(low($objectHumanName), true)));
+		}
+
+		if (!empty($data)) {
+			$data[$this->alias]['model'] = $model;
+			$data[$this->alias]['foreign_key'] = $foreignKey;
+			$data[$this->alias]['user_id'] = $userId;
+			$this->create();
+			$result = $this->save($data);
+			if ($result !== false) {
+				$this->data = array_merge($data, $result);
+				return true;
+			} else {
+				throw new OutOfBoundsException(__('Could not save the Problem, please check your inputs.', true));
+			}
+			return $return;
+		}
+	}
+
+/**
+ * Edits an existing Problem.
+ *
+ * @param string $id, problem id
+ * @param string $userId, user id
+ * @param array $data, controller post data usually $this->data
+ * @return mixed True on successfully save else post data as array
+ */
+	public function edit($id = null, $userId = null, $data = null) {
+		$this->_bindAssociatedModels();
+		$options = array(
+			'contain' => array('User'),
+			'conditions' => array(
+				$this->alias . '.id' => $id));
+		if ($userId !== false) {
+			$options['conditions'][$this->alias . '.user_id'] = $userId;
+		}
+		$problem = $this->find('first', $options);
+
+		if (empty($problem)) {
+			throw new OutOfBoundsException(__('Invalid Problem', true));
+		}
+
+		$this->set($problem);
+
+		if (!empty($data)) {
+			$this->set($data);
+			$result = $this->save(null, true);
+			if ($result) {
+				$this->data = Set::merge($problem, $result);
+				return true;
+			} else {
+				$this->data = Set::merge($problem, $result);
+			}
+		} else {
+			$this->data = $problem;
+		}
+	}
+
+/**
+ * Returns the record of a Problem.
+ *
+ * @param string $id, problem id
+ * @return array
+ */
+	public function view($id = null) {
+		$this->_bindAssociatedModels();
+		$problem = $this->find('first', array(
+			'conditions' => array(
+				"{$this->alias}.id" => $id)));
+
+		if (empty($problem)) {
+			throw new OutOfBoundsException(__('Invalid Problem', true));
+		}
+
+		return $problem;
+	}
+
+/**
+ * Validates the deletion
+ *
+ * @param string $id, problem id
+ * @param string $userId, user id
+ * @param array $data, controller post data usually $this->data
+ * @return boolean True on success
+ */
+	public function validateAndDelete($id = null, $userId = null, $data = array()) {
+		$conditions = array(
+			$this->alias . '.id' => $id);
+		if (!$this->authUser('is_admin')) {
+			$conditions[$this->alias . '.user_id'] = $userId;
+		}
+		$problem = $this->find('first', compact('conditions')); 
+
+		if (empty($problem)) {
+			throw new OutOfBoundsException(__('Invalid Problem', true));
+		}
+
+		$this->data['problem'] = $problem;
+		if (!empty($data)) {
+			$data[$this->alias]['id'] = $id;
+			$tmp = $this->validate;
+			$this->validate = array(
+				'id' => array('rule' => 'notEmpty'),
+				'confirm' => array('rule' => '[1]'));
+
+			$this->set($data);
+			if ($this->validates()) {
+				if ($this->delete($data[$this->alias]['id'])) {
+					return true;
+				}
+			}
+			$this->validate = $tmp;
+			throw new Exception(__('You need to confirm to delete this Problem', true));
+		}
+	}
+
+/**
+ * Marks a problem as accepted
+ *
+ * @param string $id the problem identifier
+ * @param bolean $accept wheter accept or unaccept the problem report
+ * @return mixed edited problem or boolean false
+ */
+	public function accept($id, $accept = true) {
+		$data = array($this->alias => array('accepted' => $accept));
+		return $this->edit($id, false, $data);
+	}
+
+/**
+ * Marks a problem as accepted
+ *
+ * @param string $id the problem identifier
+ * @param bolean $accept wheter accept or unaccept the problem report
+ * @return mixed edited problem or boolean false
+ */
+	public function acceptAll($model, $foreignKey, $accept = true) {
+		$model = Inflector::camelize($model);
+		$actualModel = Configure::read('Problems.Models.' . $model);
+		$actualModel = ClassRegistry::init($actualModel);
+		if (!$actualModel->Behaviors->enabled('Reportable')) {
+			throw new OutOfBoundsException(__d('problems', 'Invalid object type for problem report', true));
+		}
+
+		$sample = $this->find('first', array(
+			'recursive' => -1,
+			'conditions' => array(
+				$this->alias . '.accepted' => false,
+				$this->alias . '.model' => $model,
+				$this->alias . '.foreign_key' => $foreignKey)));
+
+		if (!empty($sample)) {
+			//Triggering the behavior acceptReport method on just one report should have the same effect: the record it's problematic
+			$actualModel->acceptReport($sample[$this->alias]['id']);
+		}
+
+		$this->recursive = -1;
+		return $this->updateAll(array('accepted' => $this->getDataSource()->value($accept, 'boolean')),
+			array($this->alias . '.model' => $model, $this->alias . '.foreign_key' => $foreignKey));
+	}
+
+/**
+ * Checks that the submitted type is valid
+ *
+ * @param array $check array containing the type to chek
+ * @return boolean whether the type is valid or not
+ */
+	public function validType($check) {
+		$type = current($check);
+		return isset($this->types[$type]);
+	}
+
+/**
+ * Custom find method to return all reported objects along with totals for each report type
+ *
+ * @param string $state
+ * @param array $query
+ * @param array $results
+ * @return mixed array for $state before containning the query, results when state is after
+ */
+	public function _findTotals($state, $query, $results = array()) {
+		if ($state == 'before') {
+			if (!empty($query['operation']) && $query['operation'] === 'count') {
+				unset($query['limit']);
+				$query['recursive'] = -1;
+				$query['fields'] = array('COUNT(DISTINCT model, foreign_key) AS count');
+				return $query;
+			}
+			$query['fields'] = array('model', 'foreign_key');
+			$this->virtualFields['total_reports'] = "COUNT({$this->alias}.foreign_key)";
+			$query['fields'][] = 'total_reports';
+			$query['group'] = array($this->alias . '.model', $this->alias . '.foreign_key');
+
+			$tableName = $this->tablePrefix . $this->table;
+			foreach ($this->types as $type => $description) {
+				$this->virtualFields[$type . '_total'] = 'SELECT COUNT(*) FROM ' . $tableName . " WHERE type = '{$type}' and foreign_key = {$this->alias}.foreign_key";
+				$query['fields'][] = $type . '_total';
+			}
+			$models = Configure::read('Problems.Models');
+
+			foreach ((array)$models as $alias => $model) {
+				$assoc = ClassRegistry::init($model);
+				if ($assoc->Behaviors->enabled('Reportable')) {
+					$query['contain'][$assoc->alias] = array('fields' => '*');
+				}
+			}
+			return $query;
+		}
+
+		$this->virtualFields = array();
+		if (isset($query['operation']) && $query['operation'] == 'count') {
+			return $this->_findCount('after', $query, $results);
+		}
+		return $results;
+	}
+
+/**
+ * After Find callback, creates a new entri in results named "object_title" containing the value of the display field
+ * for the associated model to this problem
+ *
+ * @param array $results
+ * @param boolean $primary
+ * @return $results modified with the "object_title" key for each record
+ */
+	function afterFind($results, $primary = false) {
+		if (empty($results[0][$this->alias]['model'])) {
+			return $results;
+		}
+		foreach ($results as &$result) {
+			if (empty($result[$this->alias]['model'])) {
+				continue;
+			}
+			$model = $result[$this->alias]['model'];
+			if (!empty($result[$model][$this->{$model}->displayField])) {
+				$result[$this->alias]['object_title'] = $result[$model][$this->{$model}->displayField];
+			} else {
+				$result[$this->alias]['object_title'] = __d('problems', 'Unknown', true);
+			}
+		}
+		return $results;
+	}
+
+/**
+ * Binds models that are declared in the config for this plugin under the key "Problems.Model"
+ * Binding is actually done in the ReportableBehavior, so models not having this behavior won't be binded
+ *
+ * @return void
+ */
+	protected function _bindAssociatedModels() {
+		$models = Configure::read('Problems.Models');
+		foreach ((array)$models as $alias => $model) {
+			$assoc = ClassRegistry::init($model);
+		}
+	}
+}
