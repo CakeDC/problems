@@ -60,11 +60,11 @@ class ProblemsController extends AppController {
 			$this->{$model} = ClassRegistry::init(Configure::read('Problems.Models.' . $model));
 
 			if (get_class($this->{$model}) === 'AppModel') {
-				throw new Exception(__('Could not save the Problem of unallowed type.', true));
+				throw new Exception(__d('problems', 'Could not save the Problem of unallowed type.', true));
 			}
 			$result = $this->{$model}->report($foreignKey, $this->Auth->user('id'), $this->data);
 			if ($result === true) {
-				$this->Session->setFlash(__('The problem has been saved', true));
+				$this->Session->setFlash(__d('problems', 'The problem has been saved', true));
 				$this->Referer->redirect('/');
 			}
 		} catch (OutOfBoundsException $e) {
@@ -94,7 +94,7 @@ class ProblemsController extends AppController {
 			$result = $this->{$model}->Problem->edit($id, $this->Auth->user('id'), $this->data);
 			if ($result === true) {
 				$foreignKey = $this->Problem->data['Problem']['foreign_key'];
-				$this->Session->setFlash(__('Problem saved', true));
+				$this->Session->setFlash(__d('problems', 'Problem saved', true));
 				$this->Referer->redirect('/');				
 			} else {
 				$this->data = $this->Problem->data;
@@ -154,7 +154,7 @@ class ProblemsController extends AppController {
 			$model = Inflector::classify($problem['Problem']['model']);
 			$this->{$model} = ClassRegistry::init(Configure::read('Problems.Models.' . $model));
 			if ($this->{$model}->Problem->edit($id, $this->Auth->user('id'), $this->data)) {
-				$this->Session->setFlash(__('Problem saved', true));
+				$this->Session->setFlash(__d('problems', 'Problem saved', true));
 			}
 		} catch (OutOfBoundsException $e) {
 			$this->Session->setFlash($e->getMessage());
@@ -180,7 +180,7 @@ class ProblemsController extends AppController {
 			$this->set(compact('foreignKey')); 
 			$result = $this->Problem->validateAndDelete($id, $this->Auth->user('id'), $this->data);
 			if ($result === true) {
-				$this->Session->setFlash(__('Problem deleted', true));
+				$this->Session->setFlash(__d('problems', 'Problem deleted', true));
 				$this->redirect(array('action' => 'index', $model));
 			}
 		} catch (Exception $e) {

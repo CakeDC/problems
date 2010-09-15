@@ -71,20 +71,20 @@ class Problem extends AppModel {
 		parent::__construct($id, $table, $ds);
 		$this->validate = array(
 			'user_id' => array(
-				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __('Please enter a User', true))),
+				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please enter a User', true))),
 			'foreign_key' => array(
-				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __('Please select item', true))),
+				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please select item', true))),
 			'type' => array(
-				'inList' => array('rule' => array('validType'), 'required' => false, 'allowEmpty' => true, 'message' => __('Please enter a valid problem type', true))),
+				'inList' => array('rule' => array('validType'), 'required' => false, 'allowEmpty' => true, 'message' => __d('problems', 'Please enter a valid problem type', true))),
 			'description' => array(
-				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __('Please enter a description of the problem.', true))),
+				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please enter a description of the problem.', true))),
 			'offensive' => array(
 				'boolean' => array('rule' => array('numeric'), 'required' => true, 'allowEmpty' => false)));
 
 		$this->offensiveStatuses = array(
-			-1 => __('Ignore', true),
-			0 => __('No', true),
-			1 => __('Yes', true));
+			-1 => __d('problems', 'Ignore', true),
+			0 => __d('problems', 'No', true),
+			1 => __d('problems', 'Yes', true));
 
 		$this->types = array(
 			'spam' => __d('problems', 'Spam', true),
@@ -104,7 +104,7 @@ class Problem extends AppModel {
  */
 	public function add($model, $foreignKey = null, $userId = null, $data = null) {
 		if (!in_array($model, $this->modelTypes)) {
-			throw new OutOfBoundsException(__('Could not save the Problem of unallowed type.', true));;
+			throw new OutOfBoundsException(__d('problems', 'Could not save the Problem of unallowed type.', true));;
 		}
 
 		$options = array(
@@ -120,7 +120,7 @@ class Problem extends AppModel {
 
 		if (!empty($problem) && !empty($data['Problem']['type'])) {
 			$objectHumanName = Inflector::humanize(Inflector::underscore($model));
-			throw new LogicException(sprintf(__('You have already reported this %s!', true), __(low($objectHumanName), true)));
+			throw new LogicException(sprintf(__d('problems', 'You have already reported this %s!', true), __(low($objectHumanName), true)));
 		}
 
 		if (!empty($data)) {
@@ -133,7 +133,7 @@ class Problem extends AppModel {
 				$this->data = array_merge($data, $result);
 				return true;
 			} else {
-				throw new OutOfBoundsException(__('Could not save the Problem, please check your inputs.', true));
+				throw new OutOfBoundsException(__d('problems', 'Could not save the Problem, please check your inputs.', true));
 			}
 			return $return;
 		}
@@ -159,7 +159,7 @@ class Problem extends AppModel {
 		$problem = $this->find('first', $options);
 
 		if (empty($problem)) {
-			throw new OutOfBoundsException(__('Invalid Problem', true));
+			throw new OutOfBoundsException(__d('problems', 'Invalid Problem', true));
 		}
 
 		$this->set($problem);
@@ -191,7 +191,7 @@ class Problem extends AppModel {
 				"{$this->alias}.id" => $id)));
 
 		if (empty($problem)) {
-			throw new OutOfBoundsException(__('Invalid Problem', true));
+			throw new OutOfBoundsException(__d('problems', 'Invalid Problem', true));
 		}
 
 		return $problem;
@@ -214,7 +214,7 @@ class Problem extends AppModel {
 		$problem = $this->find('first', compact('conditions')); 
 
 		if (empty($problem)) {
-			throw new OutOfBoundsException(__('Invalid Problem', true));
+			throw new OutOfBoundsException(__d('problems', 'Invalid Problem', true));
 		}
 
 		$this->data['problem'] = $problem;
@@ -232,7 +232,7 @@ class Problem extends AppModel {
 				}
 			}
 			$this->validate = $tmp;
-			throw new Exception(__('You need to confirm to delete this Problem', true));
+			throw new Exception(__d('problems', 'You need to confirm to delete this Problem', true));
 		}
 	}
 
