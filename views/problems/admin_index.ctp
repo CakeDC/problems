@@ -1,9 +1,9 @@
 <div class="problems index">
-<h2><?php __('Problems');?></h2>
+<h2><?php __d('problems', 'Problems');?></h2>
 <p>
 	<?php
 		echo $this->Paginator->counter(array(
-		'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
+		'format' => __d('problems', 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
 		));
 	?>
 </p>
