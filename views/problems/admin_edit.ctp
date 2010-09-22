@@ -7,7 +7,7 @@
 		echo $this->Form->input('description');
 		echo $this->Form->input('offensive', array(
 			'label' => __('Report as offensive', true)));
-		echo $form->hidden('Data.referer', array('value' => @$referer));
+		echo $this->Form->hidden('Data.referer', array('value' => @$referer));
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit', true));?>

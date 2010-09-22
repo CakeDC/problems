@@ -10,7 +10,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright 2010, Cake Development Corporation
- * @link      http://github.com/CakeDC/Comments
+ * @link      http://github.com/CakeDC/problems
  * @package   plugins.problems.config.schema
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
