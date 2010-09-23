@@ -1,0 +1,265 @@
+# LANGUAGE translation of the CakePHP Problems plugin
+#
+# Copyright 2010, Cake Development Corporation (http://cakedc.com)
+#
+# Licensed under The MIT License
+# Redistributions of files must retain the above copyright notice.
+#
+# @copyright Copyright 2010, Cake Development Corporation (http://cakedc.com)
+# @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: CakePHP Problems Plugin\n"
+"POT-Creation-Date: 2010-09-15 15:23+0200\n"
+"PO-Revision-Date: 2010-09-23 17:02-0300\n"
+"Last-Translator: Renan Gonçalves <renan.saddam@gmail.com>\n"
+"Language-Team: CakeDC <renan.saddam@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2;plural=n>1;\n"
+"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Country: BRAZIL\n"
+
+#: /controllers/problems_controller.php:63
+#: /models/problem.php:107
+msgid "Could not save the Problem of unallowed type."
+msgstr "Não foi possível salvar o Problema com tipo não permitido."
+
+#: /controllers/problems_controller.php:67
+msgid "The problem has been saved"
+msgstr "O problema foi salvdo"
+
+#: /controllers/problems_controller.php:97;157
+msgid "Problem saved"
+msgstr "Problema salvo"
+
+#: /controllers/problems_controller.php:183
+msgid "Problem deleted"
+msgstr "Problema removido"
+
+#: /controllers/problems_controller.php:236
+msgid "Problem report was accepted"
+msgstr "Relato de problema foi aceito"
+
+#: /controllers/problems_controller.php:255
+msgid "Problem report was unaccepted"
+msgstr "Relato de problema não foi aceito"
+
+#: /controllers/problems_controller.php:276
+msgid "Problem reports were accepted"
+msgstr "Relatos de problema foram aceitos"
+
+#: /controllers/problems_controller.php:297
+msgid "Problem reports were unaccepted"
+msgstr "Relatos de problema não foram aceitos"
+
+#: /models/problem.php:74
+msgid "Please enter a User"
+msgstr "Por favor entre o Usuário"
+
+#: /models/problem.php:76
+msgid "Please select item"
+msgstr "Por favor selecione o item"
+
+#: /models/problem.php:78
+msgid "Please enter a valid problem type"
+msgstr "Por favor entre com um tipo de problema válido"
+
+#: /models/problem.php:80
+msgid "Please enter a description of the problem."
+msgstr "Por favor entre com a descrição do problema."
+
+#: /models/problem.php:85
+msgid "Ignore"
+msgstr "Ignorar"
+
+#: /models/problem.php:86
+#: /views/problems/admin_review.ctp:37
+#: /views/problems/admin_view.ctp:37;44;56
+msgid "No"
+msgstr "Não"
+
+#: /models/problem.php:87
+#: /views/problems/admin_review.ctp:37
+#: /views/problems/admin_view.ctp:37;44;56
+msgid "Yes"
+msgstr "Sim"
+
+#: /models/problem.php:90
+msgid "Spam"
+msgstr "Spam"
+
+#: /models/problem.php:91
+msgid "Sexual Content"
+msgstr "Conteúdo Sexual"
+
+#: /models/problem.php:92
+msgid "Insult/Racism"
+msgstr "Insulto/Racismo"
+
+#: /models/problem.php:93
+msgid "Stolen Content"
+msgstr "Conteúdo Roubado"
+
+#: /models/problem.php:94
+msgid "Other"
+msgstr "Outro"
+
+#: /models/problem.php:123
+msgid "You have already reported this %s!"
+msgstr "Você já reportou esse %s!"
+
+#: /models/problem.php:136
+msgid "Could not save the Problem, please check your inputs."
+msgstr "Não foi possível salvar o Problema, por favor verifique os dados."
+
+#: /models/problem.php:162;194;217
+msgid "Invalid Problem"
+msgstr "Problema inválido"
+
+#: /models/problem.php:235
+msgid "You need to confirm to delete this Problem"
+msgstr "Você precisa confirmar a remocão desse Problema"
+
+#: /models/problem.php:263
+msgid "Invalid object type for problem report"
+msgstr "Objeto tipo de relatório de problema inválido"
+
+#: /models/problem.php:358
+msgid "Unknown"
+msgstr "Desconhecido"
+
+#: /views/problems/add.ctp:3
+#: /views/problems/admin_edit.ctp:3
+#: /views/problems/edit.ctp:3
+msgid "Report a Problem"
+msgstr "Reportar um Problema"
+
+#: /views/problems/add.ctp:6
+msgid "Type of problem"
+msgstr "Tipo do Problema"
+
+#: /views/problems/add.ctp:9
+#: /views/problems/admin_edit.ctp:9
+#: /views/problems/edit.ctp:9
+msgid "Report as offensive"
+msgstr "Reportar como ofensivo"
+
+#: /views/problems/add.ctp:12
+#: /views/problems/admin_edit.ctp:13
+#: /views/problems/edit.ctp:13
+msgid "Submit"
+msgstr "Enviar"
+
+#: /views/problems/admin_delete.ctp:1
+#: /views/problems/admin_view.ctp:66
+msgid "Delete Problem"
+msgstr "Remover Problema"
+
+#: /views/problems/admin_delete.ctp:3
+msgid "Be aware that your Problem will be deleted if you confirm!"
+msgstr "Esteja ciente de que seu problema vai ser removido caso confirme!"
+
+#: /views/problems/admin_delete.ctp:11
+msgid "Confirm"
+msgstr "Confirmar"
+
+#: /views/problems/admin_delete.ctp:13
+msgid "You have to confirm."
+msgstr "Você precisa confirmar."
+
+#: /views/problems/admin_delete.ctp:14
+msgid "Continue"
+msgstr "Continuar"
+
+#: /views/problems/admin_index.ctp:2
+#: /views/problems/admin_review.ctp:2
+msgid "Problems"
+msgstr "Problemas"
+
+#: /views/problems/admin_index.ctp:6
+#: /views/problems/admin_review.ctp:6
+msgid "Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%"
+msgstr "Página %page% de %pages%, mostrando %current% resultados de um total de %count%, começando em %start%, terminando em %end%"
+
+#: /views/problems/admin_index.ctp:13
+#: /views/problems/admin_review.ctp:13
+msgid "Reported object"
+msgstr "Objeto reportado"
+
+#: /views/problems/admin_index.ctp:14
+msgid "Type"
+msgstr "Tipo"
+
+#: /views/problems/admin_index.ctp:18
+msgid "Total Reports"
+msgstr "Total de Relatos"
+
+#: /views/problems/admin_index.ctp:19
+#: /views/problems/admin_review.ctp:18
+msgid "Actions"
+msgstr "Ações"
+
+#: /views/problems/admin_review.ctp:14
+#: /views/problems/admin_view.ctp:19
+msgid "Object Type"
+msgstr "Tipo de Objeto"
+
+#: /views/problems/admin_review.ctp:15
+msgid "Report Type"
+msgstr "Tipo de Relato"
+
+#: /views/problems/admin_review.ctp:16
+#: /views/problems/admin_view.ctp:53
+msgid "Accepted"
+msgstr "Aceito"
+
+#: /views/problems/admin_review.ctp:17
+#: /views/problems/admin_view.ctp:29
+msgid "Description"
+msgstr "Descrição"
+
+#: /views/problems/admin_review.ctp:40
+msgid "View Report"
+msgstr "Visualizar Relato"
+
+#: /views/problems/admin_review.ctp:41
+#: /views/problems/admin_view.ctp:64
+msgid "Accept"
+msgstr "Aceitar"
+
+#: /views/problems/admin_review.ctp:42
+#: /views/problems/admin_view.ctp:65
+msgid "Unaccept"
+msgstr "Inaceitar"
+
+#: /views/problems/admin_view.ctp:2
+msgid "Problem"
+msgstr "Problema"
+
+#: /views/problems/admin_view.ctp:4
+msgid "Reported Object"
+msgstr "Objecto Reportado"
+
+#: /views/problems/admin_view.ctp:24
+msgid "Reported by"
+msgstr "Reportado por"
+
+#: /views/problems/admin_view.ctp:34
+msgid "Offensive"
+msgstr "Ofensivo"
+
+#: /views/problems/admin_view.ctp:41
+msgid "Request To Edit"
+msgstr "Requisitar Edição"
+
+#: /views/problems/admin_view.ctp:48
+msgid "Reported"
+msgstr "Reportado"
+
+#: /views/problems/admin_view.ctp:66
+msgid "Are you sure you want to delete # %s?"
+msgstr "Você tem certeza que deseja remover # %s?"
+
