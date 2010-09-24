@@ -34,7 +34,7 @@ The acceptance of reports could trigger actions configurable in this plugin.
 1. Add the Problems helper to you controller
 		public $helpers = array('Problems.Problems');
 2. Use the helper in your views to generate links to the problem report form
-		<?php echo $this->Problem->link('ModelName', 'recordID', 'Link Title'); ?>
+		<?php echo $this->Problems->link('ModelName', 'recordID', 'Link Title'); ?>
 
 This link will redirect the user to a form where he can report the problem
 
