@@ -4,7 +4,7 @@
 	<?php
 		echo $this->Form->hidden('Data.referer', array('value' => @$referer));
 		echo $this->Form->input('type', array('label' => __d('problems', 'Type of problem', true)));
-		echo $this->Form->input('description');
+		echo $this->Form->input('description', array('label' => __d('problems', 'Description', true)));
 		echo $this->Form->input('offensive', array(
 			'label' => __d('problems', 'Report as offensive', true)));
 	?>
