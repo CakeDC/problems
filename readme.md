@@ -1,8 +1,3 @@
-Copyright 2010, Cake Development Corporation
-                        1785 E. Sahara Avenue, Suite 490-423
-                        Las Vegas, Nevada 89104
-                        http://cakedc.com
-
 ## CakePHP Problems Plugin
 
 This plugin allows to attach problem reports to any model record on your app. Problem reports
@@ -64,3 +59,29 @@ You can customize this links implementing this method in your model
 			return array('controller' => 'my_controller', 'action' => 'view', $id);
 		}
 
+## Requirements ##
+
+* PHP version: PHP 5.2+
+* CakePHP version: Cakephp 1.3 Stable
+* [CakeDC Utils plugin](http://github.com/CakeDC/utils)
+
+## Support ##
+
+For support and feature request, please visit the [Problems Plugin Support Site](http://cakedc.lighthouseapp.com/projects/59614-problems-plugin/).
+
+For more information about our Professional CakePHP Services please visit the [Cake Development Corporation website](http://cakedc.com).
+
+## License ##
+
+Copyright 2009-2010, [Cake Development Corporation](http://cakedc.com)
+
+Licensed under [The MIT License](http://www.opensource.org/licenses/mit-license.php)<br/>
+Redistributions of files must retain the above copyright notice.
+
+## Copyright ###
+
+Copyright 2009-2010<br/>
+[Cake Development Corporation](http://cakedc.com)<br/>
+1785 E. Sahara Avenue, Suite 490-423<br/>
+Las Vegas, Nevada 89104<br/>
+http://cakedc.com<br/>
