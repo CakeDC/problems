@@ -185,8 +185,9 @@ class Problem extends AppModel {
  * @return array
  */
 	public function view($id = null) {
-		$this->_bindAssociatedModels();
+		$binded = $this->_bindAssociatedModels();
 		$problem = $this->find('first', array(
+			'contain' => $binded,
 			'conditions' => array(
 				"{$this->alias}.id" => $id)));
 
@@ -207,10 +208,8 @@ class Problem extends AppModel {
  */
 	public function validateAndDelete($id = null, $userId = null, $data = array()) {
 		$conditions = array(
-			$this->alias . '.id' => $id);
-		if (!$this->authUser('is_admin')) {
-			$conditions[$this->alias . '.user_id'] = $userId;
-		}
+			$this->alias . '.id' => $id,
+			$this->alias . '.user_id' => $userId);
 		$problem = $this->find('first', compact('conditions')); 
 
 		if (empty($problem)) {
@@ -365,12 +364,17 @@ class Problem extends AppModel {
  * Binds models that are declared in the config for this plugin under the key "Problems.Model"
  * Binding is actually done in the ReportableBehavior, so models not having this behavior won't be binded
  *
- * @return void
+ * @return array Binded models
  */
 	protected function _bindAssociatedModels() {
+		$binded = array();
 		$models = Configure::read('Problems.Models');
 		foreach ((array)$models as $alias => $model) {
 			$assoc = ClassRegistry::init($model);
+			if (is_a($assoc, 'Model')) {
+				$binded[] = $alias;
+			}
 		}
+		return $binded;
 	}
 }
