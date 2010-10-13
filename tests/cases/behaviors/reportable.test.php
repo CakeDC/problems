@@ -32,6 +32,10 @@ class ProblematicArticle extends Model {
 	public function afterAcceptReport($reportId, $data) {
 		$this->mockAfterAcceptReport = compact('reportId', 'data');
 	}
+
+	public function afterUnAcceptReport($reportId) {
+		$this->mockAfterUnAcceptReport = compact('reportId');
+	}
 }
 
 class ProblemTestUser extends Model {
@@ -157,5 +161,21 @@ class ReportableTest extends CakeTestCase {
 		unset($this->Article->mockAfterAcceptReport['data']['Problem']['object_title']);
 		$this->assertEqual($this->Article->mockAfterAcceptReport, $expected);
 	}
+	
+/**
+ * Tests unAcceptReport method
+ *
+ * @access public
+ */
+	public function testUnAcceptReport() {
+		$data = array('Problem' => array('description' => 'My problem'));
+		$result = $this->Article->report(1, 1, $data);
+		$id = $this->Article->Problem->id;
+
+		$result = $this->Article->unAcceptReport($id);
+		$this->assertTrue($result);
+		$expected = array('reportId' => $id);
+		$this->assertEqual($this->Article->mockAfterUnAcceptReport, $expected);
+	}
+
 }
-?>
