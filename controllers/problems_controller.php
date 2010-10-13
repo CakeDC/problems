@@ -57,11 +57,17 @@ class ProblemsController extends AppController {
 	public function add($objectType, $foreignKey) {
 		try {
 			$model = Inflector::classify($objectType);
-			$this->{$model} = ClassRegistry::init(Configure::read('Problems.Models.' . $model));
 
+			if (!ClassRegistry::isKeySet($model)) {
+				$this->{$model} = ClassRegistry::init(Configure::read('Problems.Models.' . $model));
+			} else {
+				$this->{$model} = ClassRegistry::getObject($model);
+			}
+			
 			if (get_class($this->{$model}) === 'AppModel') {
 				throw new Exception(__d('problems', 'Could not save the Problem of unallowed type.', true));
 			}
+			
 			$result = $this->{$model}->report($foreignKey, $this->Auth->user('id'), $this->data);
 			if ($result === true) {
 				$this->Session->setFlash(__d('problems', 'The problem has been saved', true));

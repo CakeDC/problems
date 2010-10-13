@@ -60,7 +60,7 @@ class ProblemFixture extends CakeTestFixture {
 			'description' => 'Article is problematic.',
 			'offensive' => 0,
 			'request_to_edit' => 0,
-			'accepted' => 0,
+			'accepted' => null,
 			'created' => '2010-03-10 12:04:12',
 			'modified' => '2010-03-10 12:04:12'
 		),

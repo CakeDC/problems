@@ -208,9 +208,9 @@ class Problem extends AppModel {
 	public function validateAndDelete($id = null, $userId = null, $data = array()) {
 		$conditions = array(
 			$this->alias . '.id' => $id);
-		if (!$this->authUser('is_admin')) {
+		// if (!$this->authUser('is_admin')) {
 			$conditions[$this->alias . '.user_id'] = $userId;
-		}
+		// }
 		$problem = $this->find('first', compact('conditions')); 
 
 		if (empty($problem)) {
@@ -257,8 +257,13 @@ class Problem extends AppModel {
  */
 	public function acceptAll($model, $foreignKey, $accept = true) {
 		$model = Inflector::camelize($model);
-		$actualModel = Configure::read('Problems.Models.' . $model);
-		$actualModel = ClassRegistry::init($actualModel);
+		$actualModel = Configure::read('Problems.Models.' . $model);		
+		if (!ClassRegistry::isKeySet($model)) {
+			$actualModel = ClassRegistry::init($actualModel);
+		} else {
+			$actualModel= ClassRegistry::getObject($model);
+		}
+		
 		if (!$actualModel->Behaviors->enabled('Reportable')) {
 			throw new OutOfBoundsException(__d('problems', 'Invalid object type for problem report', true));
 		}
@@ -266,13 +271,14 @@ class Problem extends AppModel {
 		$sample = $this->find('first', array(
 			'recursive' => -1,
 			'conditions' => array(
-				$this->alias . '.accepted' => false,
+				$this->alias . '.accepted' => null,
 				$this->alias . '.model' => $model,
 				$this->alias . '.foreign_key' => $foreignKey)));
 
 		if (!empty($sample)) {
-			//Triggering the behavior acceptReport method on just one report should have the same effect: the record it's problematic
-			$actualModel->acceptReport($sample[$this->alias]['id']);
+			//Triggering the behavior (un)acceptReport method on just one report should have the same effect: the record it's problematic
+			$action = ($accept) ? 'acceptReport' : 'unAcceptReport';
+			$actualModel->{$action}($sample[$this->alias]['id']);
 		}
 
 		$this->recursive = -1;
@@ -325,6 +331,7 @@ class Problem extends AppModel {
 					$query['contain'][$assoc->alias] = array('fields' => '*');
 				}
 			}
+			$query['conditions'][$this->alias . '.accepted'] = null;
 			return $query;
 		}
 

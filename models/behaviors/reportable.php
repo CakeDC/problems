@@ -81,7 +81,7 @@ class ReportableBehavior extends ModelBehavior {
 		}
 		$Model->Problem->modelTypes[] = $Model->alias;
 	}
-	
+
 /**
  * Saves problem data ssociated to a model record
  *
@@ -103,7 +103,7 @@ class ReportableBehavior extends ModelBehavior {
  * Marks a problem report as accepted
  *
  * @param AppModel $Model
- * @param string $reportId 
+ * @param string $reportId
  * @return mixed edited report or false on failure
  */
 	public function acceptReport(Model $Model, $reportId) {
@@ -115,10 +115,25 @@ class ReportableBehavior extends ModelBehavior {
 	}
 
 /**
+ * Marks a problem report as un-accepted
+ *
+ * @param AppModel $Model
+ * @param string $reportId 
+ * @return mixed edited report or false on failure
+ */
+	public function unAcceptReport(Model $Model, $reportId) {
+		$result = $Model->Problem->accept($reportId, false);
+		if ($result && method_exists($Model, 'afterUnAcceptReport')) {
+			$Model->afterUnAcceptReport($reportId);
+		}
+		return $result;
+	}
+
+/**
  * Generates an array of params to be used in Router::url() to get a link to the reported object view page
  *
  * @param AppModel $Model
- * @param string $id the reported object identifier 
+ * @param string $id the reported object identifier
  * @return array
  */
 	public function reportedObjectUrl(Model $Model, $id) {
