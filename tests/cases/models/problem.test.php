@@ -86,6 +86,7 @@ class ProblemTestCase extends CakeTestCase {
 		unset($data['Problem']['id']);
 		$result = $this->Problem->add('ProblematicArticle', 'article-1', $userId, $data);
 		$this->assertTrue($result);
+		$this->Problem->recursive = 1;
 		$data = $this->Problem->read();
 
 		$this->assertEqual($data['Problem']['model'], 'ProblematicArticle');
