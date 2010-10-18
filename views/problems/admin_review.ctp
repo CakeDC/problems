@@ -24,7 +24,7 @@
 				$model = $problem['Problem']['model'];
 				$foreingKey = $problem['Problem']['foreign_key'];
 				echo $this->Html->link(
-					$problem['Problem']['object_title'],
+					$this->Text->truncate($problem['Problem']['object_title'], 25),
 					array(
 						'action' => 'view_object',
 						$model,

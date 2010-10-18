@@ -12,8 +12,8 @@
 <tr>
 	<th><?php echo __d('problems', 'Reported object'); ?></th>
 	<th><?php echo $this->Paginator->sort(__d('problems', 'Type', true), 'Problem.model')?></th>
-	<?php foreach ($reportTypes as $type => $text) :?>
-		<th><?php echo $this->Paginator->sort($text, $type)?></th>
+	<?php foreach ($reportTypes as $type => $t) :?>
+		<th><?php echo $this->Paginator->sort($t, $type)?></th>
 	<?php endforeach; ?>
 	<th><?php echo $this->Paginator->sort(__d('problems', 'Total Reports', true), 'total_reports')?></th>
 	<th><?php __d('problems', 'Actions')?></th>
@@ -25,7 +25,7 @@
 				$model = $problem['Problem']['model'];
 				$foreingKey = $problem['Problem']['foreign_key'];
 				echo $this->Html->link(
-					$problem['Problem']['object_title'],
+					$this->Text->truncate($problem['Problem']['object_title'], 25),
 					array(
 						'action' => 'view_object',
 						$model,
@@ -34,7 +34,7 @@
 			?>
 		</td>
 		<td><?php echo Inflector::humanize(Inflector::underscore($problem['Problem']['model'])); ?></td>
-		<?php foreach ($reportTypes as $type => $text) :?>
+		<?php foreach ($reportTypes as $type => $t) :?>
 			<td><?php echo $problem['Problem'][$type . '_total']; ?></td>
 		<?php endforeach; ?>
 		<td><?php echo $problem['Problem']['total_reports']; ?></td>
