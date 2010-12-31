@@ -244,7 +244,7 @@ class Problem extends AppModel {
  */
 	public function accept($id, $accept = true) {
 		$data = array($this->alias => array('accepted' => $accept));
-		return $this->edit($id, false, $data);
+		return (bool) $this->edit($id, false, $data);
 	}
 
 /**
