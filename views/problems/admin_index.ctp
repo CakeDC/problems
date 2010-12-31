@@ -1,9 +1,9 @@
 <div class="problems index">
-<h2><?php __d('problems', 'Problems');?></h2>
+<h2><?php echo __d('problems', 'Problems');?></h2>
 <p>
 	<?php
 		echo $this->Paginator->counter(array(
-		'format' => __d('problems', 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
+		'format' => __d('problems', 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%')
 		));
 	?>
 </p>
@@ -11,12 +11,12 @@
 <table cellpadding="0" cellspacing="0">
 <tr>
 	<th><?php echo __d('problems', 'Reported object'); ?></th>
-	<th><?php echo $this->Paginator->sort(__d('problems', 'Type', true), 'Problem.model')?></th>
+	<th><?php echo $this->Paginator->sort(__d('problems', 'Type'), 'Problem.model')?></th>
 	<?php foreach ($reportTypes as $type => $t) :?>
 		<th><?php echo $this->Paginator->sort($t, $type)?></th>
 	<?php endforeach; ?>
-	<th><?php echo $this->Paginator->sort(__d('problems', 'Total Reports', true), 'total_reports')?></th>
-	<th><?php __d('problems', 'Actions')?></th>
+	<th><?php echo $this->Paginator->sort(__d('problems', 'Total Reports'), 'total_reports')?></th>
+	<th><?php echo __d('problems', 'Actions')?></th>
 </tr>
 <?php foreach ($problems as $problem) :?>
 	<tr>
