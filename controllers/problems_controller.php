@@ -68,7 +68,7 @@ class ProblemsController extends AppController {
 				throw new Exception(__d('problems', 'Could not save the Problem of unallowed type.'));
 			}
 			
-			$result = $this->{$model}->report($foreignKey, $this->Auth->user('id'), $this->data);
+			$result = $this->{$model}->report($foreignKey, $this->Auth->user('id'), $this->request->data);
 			if ($result === true) {
 				$this->Session->setFlash(__d('problems', 'The problem has been saved'));
 				$this->Referer->redirect('/');
@@ -97,15 +97,15 @@ class ProblemsController extends AppController {
 			$problem = $this->Problem->view($id);
 			$model = Inflector::classify($problem['Problem']['model']);
 			$this->{$model} = ClassRegistry::init(Configure::read('Problems.Models.' . $model));
-			$result = $this->{$model}->Problem->edit($id, $this->Auth->user('id'), $this->data);
+			$result = $this->{$model}->Problem->edit($id, $this->Auth->user('id'), $this->request->data);
 			if ($result === true) {
 				$foreignKey = $this->Problem->data['Problem']['foreign_key'];
 				$this->Session->setFlash(__d('problems', 'Problem saved'));
 				$this->Referer->redirect('/');				
 			} else {
-				$this->data = $this->Problem->data;
-				$foreignKey = $this->data['Problem']['foreign_key'];
-				$model = $this->data['Problem']['model'];
+				$this->request->data = $this->Problem->data;
+				$foreignKey = $this->request->data['Problem']['foreign_key'];
+				$model = $this->request->data['Problem']['model'];
 			}
 		} catch (OutOfBoundsException $e) {
 			$this->Session->setFlash($e->getMessage());
@@ -159,7 +159,7 @@ class ProblemsController extends AppController {
 			$problem = $this->Problem->view($id);
 			$model = Inflector::classify($problem['Problem']['model']);
 			$this->{$model} = ClassRegistry::init(Configure::read('Problems.Models.' . $model));
-			if ($this->{$model}->Problem->edit($id, $this->Auth->user('id'), $this->data)) {
+			if ($this->{$model}->Problem->edit($id, $this->Auth->user('id'), $this->request->data)) {
 				$this->Session->setFlash(__d('problems', 'Problem saved'));
 			}
 		} catch (OutOfBoundsException $e) {
@@ -167,7 +167,7 @@ class ProblemsController extends AppController {
 			$this->redirect('/');
 		}
 
-		$this->data = $this->Problem->data;
+		$this->request->data = $this->Problem->data;
 		$this->set('problem', $this->Problem->data);
 		$this->set('type', strtolower($model));
 		$this->set('types', $this->{$model}->Problem->types); 
@@ -184,7 +184,7 @@ class ProblemsController extends AppController {
 			$foreignKey = $problem['Problem']['foreign_key'];
 			$model = Inflector::underscore($problem['Problem']['model']);
 			$this->set(compact('foreignKey')); 
-			$result = $this->Problem->validateAndDelete($id, $this->Auth->user('id'), $this->data);
+			$result = $this->Problem->validateAndDelete($id, $this->Auth->user('id'), $this->request->data);
 			if ($result === true) {
 				$this->Session->setFlash(__d('problems', 'Problem deleted'));
 				$this->redirect(array('action' => 'index', $model));

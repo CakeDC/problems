@@ -130,7 +130,7 @@ class Problem extends AppModel {
 			$this->create();
 			$result = $this->save($data);
 			if ($result !== false) {
-				$this->data = array_merge($data, $result);
+				$this->request->data = array_merge($data, $result);
 				return true;
 			} else {
 				throw new OutOfBoundsException(__d('problems', 'Could not save the Problem, please check your inputs.'));
@@ -144,7 +144,7 @@ class Problem extends AppModel {
  *
  * @param string $id, problem id
  * @param string $userId, user id
- * @param array $data, controller post data usually $this->data
+ * @param array $data, controller post data usually $this->request->data
  * @return mixed True on successfully save else post data as array
  */
 	public function edit($id = null, $userId = null, $data = null) {
@@ -168,13 +168,13 @@ class Problem extends AppModel {
 			$this->set($data);
 			$result = $this->save(null, true);
 			if ($result) {
-				$this->data = Set::merge($problem, $result);
+				$this->request->data = Set::merge($problem, $result);
 				return true;
 			} else {
-				$this->data = Set::merge($problem, $result);
+				$this->request->data = Set::merge($problem, $result);
 			}
 		} else {
-			$this->data = $problem;
+			$this->request->data = $problem;
 		}
 	}
 
@@ -203,7 +203,7 @@ class Problem extends AppModel {
  *
  * @param string $id, problem id
  * @param string $userId, user id
- * @param array $data, controller post data usually $this->data
+ * @param array $data, controller post data usually $this->request->data
  * @return boolean True on success
  */
 	public function validateAndDelete($id = null, $userId = null, $data = array()) {
@@ -216,7 +216,7 @@ class Problem extends AppModel {
 			throw new OutOfBoundsException(__d('problems', 'Invalid Problem'));
 		}
 
-		$this->data['problem'] = $problem;
+		$this->request->data['problem'] = $problem;
 		if (!empty($data)) {
 			$data[$this->alias]['id'] = $id;
 			$tmp = $this->validate;
