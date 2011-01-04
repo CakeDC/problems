@@ -78,8 +78,7 @@ class Problem extends AppModel {
 				'inList' => array('rule' => array('validType'), 'required' => false, 'allowEmpty' => true, 'message' => __d('problems', 'Please enter a valid problem type'))),
 			'description' => array(
 				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please enter a description of the problem.'))),
-			'offensive' => array(
-				'boolean' => array('rule' => array('numeric'), 'required' => true, 'allowEmpty' => false)));
+		);
 
 		$this->offensiveStatuses = array(
 			-1 => __d('problems', 'Ignore'),

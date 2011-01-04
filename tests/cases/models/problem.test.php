@@ -191,17 +191,16 @@ class ProblemTestCase extends CakeTestCase {
  * @expectedException OutOfBoundsException
  */
 	public function testAccept() {
-		$userId = '1';
 		$result = $this->Problem->field('accepted', array('id' => 1));
 		$this->assertNull($result);
-		$this->assertTrue($this->Problem->accept(1, $userId));
+		$this->assertTrue($this->Problem->accept(1));
 		$result = $this->Problem->field('accepted', array('id' => 1));
 		$this->assertTrue((bool)$result);
 		
 		$this->assertTrue($this->Problem->accept(1, false));
 		$result = $this->Problem->field('accepted', array('id' => 1));
 		$this->assertFalse((bool)$result);
-		$this->Problem->accept('WROG_ID', $userId);
+		$this->Problem->accept('WROG_ID');
 	}
 
 /**
