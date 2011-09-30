@@ -1,5 +1,7 @@
 ## CakePHP Problems Plugin
 
+Version 1.1
+
 This plugin allows to attach problem reports to any model record on your app. Problem reports
 consist of a configurable type and a problem description or cause and can be submitted by logged in users
 only once per model record.
@@ -80,7 +82,7 @@ Redistributions of files must retain the above copyright notice.
 
 ## Copyright ###
 
-Copyright 2009-2010<br/>
+Copyright 2009-2011<br/>
 [Cake Development Corporation](http://cakedc.com)<br/>
 1785 E. Sahara Avenue, Suite 490-423<br/>
 Las Vegas, Nevada 89104<br/>
