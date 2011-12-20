@@ -17,16 +17,19 @@
 App::import('Behavior', 'Problem.Reportable');
 
 
-class ProblematicArticle extends Model {
-	public $name = 'ProblematicArticle';
-	public $actsAs = array('Problems.Reportable' => array('userClass' => 'ProblemModelUser'));
+if (!class_exists('ProblematicArticle')) {
+	class ProblematicArticle extends Model {
+		public $name = 'ProblematicArticle';
+		public $actsAs = array('Problems.Reportable' => array('userClass' => 'ProblemModelUser'));
+	}
 }
 
-class ProblemModelUser extends Model {
-	public $name = 'User';
-	public $useTable = 'users';
+if (!class_exists('ProblemModelUser')) {
+	class ProblemModelUser extends Model {
+		public $name = 'User';
+		public $useTable = 'users';
+	}
 }
-/* Problem Test cases generated on: 2010-03-10 12:03:14 : 1268219054*/
 
 class ProblemTestCase extends CakeTestCase {
 
@@ -57,7 +60,7 @@ class ProblemTestCase extends CakeTestCase {
 		$this->Problem = ClassRegistry::init('Problems.Problem');
 		$this->Problem->modelTypes = array('ProblematicArticle');
 		$fixture = new ProblemFixture();
-		ClassRegistry::init('ProblematicArticle');
+		$Article = ClassRegistry::init('ProblematicArticle');
 		$this->record = array('Problem' => $fixture->records[0]);
 	}
 

@@ -50,8 +50,9 @@ The Reportable behavior has some configuration option to adapt to your app needs
 ## Customization 
 
 Additionally the behavior provides two callbacks to implement in your model:
-1. afterReport: Implement this function in your model to take specific actions after a model record is reported
-2. afterAcceptReport: Implement this function in your model to take specific actions after a problem report is marked as accepted for a model record, for example delete the entry in the database
+1. beforeReport: Implement this function in your model to make decission to allow report about the problem before a data about reported recorded
+2. afterReport: Implement this function in your model to take specific actions after a model record is reported
+3. afterAcceptReport: Implement this function in your model to take specific actions after a problem report is marked as accepted for a model record, for example delete the entry in the database
 
 The admin interface links to reported model records to ease the task of accepting the problems. This link is generated using the method "reportedObjectUrl". 
 You can customize this links implementing this method in your model

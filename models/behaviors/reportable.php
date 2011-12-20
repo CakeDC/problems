@@ -92,9 +92,11 @@ class ReportableBehavior extends ModelBehavior {
  * @return void
  */
 	public function report(Model $Model, $id, $userId, $data) {
-		$result = $Model->Problem->add($Model->alias, $id, $userId, $data);
-		if ($result && method_exists($Model, 'afterReport')) {
-			$Model->afterReport($id, $data, $Model->Problem->data);
+		if (!method_exists($Model, 'beforeReport') || method_exists($Model, 'beforeReport') && $Model->beforeReport($id, $userId, $data)) {
+			$result = $Model->Problem->add($Model->alias, $id, $userId, $data);
+			if ($result && method_exists($Model, 'afterReport')) {
+				$Model->afterReport($id, $data, $Model->Problem->data);
+			}
 		}
 		return $result;
 	}
