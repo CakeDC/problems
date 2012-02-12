@@ -9,6 +9,8 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppModel', 'Model');
+
 /**
  * Problem Model
  *
@@ -51,14 +53,28 @@ class Problem extends AppModel {
  *
  * @var array
  */
-	public $validate = array();
+	public $validate = array(
+		'user_id' => array(
+			'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => 'Please enter a User')
+		),
+		'foreign_key' => array(
+			'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => 'Please select item')
+		),
+		'type' => array(
+			'inList' => array('rule' => array('validType'), 'required' => false, 'allowEmpty' => true, 'message' => 'Please enter a valid problem type')
+		),
+		'description' => array(
+			'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => 'Please enter a description of the problem.')
+		),
+	);
+
 
 /**
  * Custom find methods to use
  *
  * @var array
  */
-	public $_findMethods = array('totals' => true);
+	public $findMethods = array('totals' => true);
 
 /**
  * Constructor
@@ -69,16 +85,6 @@ class Problem extends AppModel {
  */
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$this->validate = array(
-			'user_id' => array(
-				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please enter a User'))),
-			'foreign_key' => array(
-				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please select item'))),
-			'type' => array(
-				'inList' => array('rule' => array('validType'), 'required' => false, 'allowEmpty' => true, 'message' => __d('problems', 'Please enter a valid problem type'))),
-			'description' => array(
-				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please enter a description of the problem.'))),
-		);
 
 		$this->offensiveStatuses = array(
 			-1 => __d('problems', 'Ignore'),
@@ -230,7 +236,7 @@ class Problem extends AppModel {
 				}
 			}
 			$this->validate = $tmp;
-			throw new Exception(__d('problems', 'You need to confirm to delete this Problem'));
+			throw new BadMethodCallException(__d('problems', 'You need to confirm to delete this Problem'));
 		}
 	}
 
@@ -303,7 +309,7 @@ class Problem extends AppModel {
  * @param array $results
  * @return mixed array for $state before containning the query, results when state is after
  */
-	public function _findTotals($state, $query, $results = array()) {
+	protected function _findTotals($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (!empty($query['operation']) && $query['operation'] === 'count') {
 				unset($query['limit']);

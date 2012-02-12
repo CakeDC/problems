@@ -14,8 +14,8 @@
  * @package   plugins.problems.test.cases.models
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Behavior', 'Problem.Reportable');
 
+App::uses('ReportableBehavior', 'Problem.Model/Behavior');
 
 class ProblematicArticle extends CakeTestModel {
 	public $name = 'ProblematicArticle';
@@ -28,7 +28,7 @@ class ProblemModelUser extends CakeTestModel {
 }
 /* Problem Test cases generated on: 2010-03-10 12:03:14 : 1268219054*/
 
-class ProblemTestCase extends CakeTestCase {
+class ProblemTest extends CakeTestCase {
 
 /**
  * Fixtures
@@ -157,7 +157,7 @@ class ProblemTestCase extends CakeTestCase {
 /**
  * Test validateAndDelete with no confirmation sent by the user
  *
- * @expectedException Exception
+ * @expectedException BadMethodCallException
  */
 	public function testValidateAndDeleteNoConfirmation() {
 		$userId = '1';

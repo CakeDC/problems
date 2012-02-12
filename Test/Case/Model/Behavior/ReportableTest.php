@@ -14,7 +14,8 @@
  * @package   plugins.problems.tests.cases.behaviors
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Behavior', 'Problems.Reportable');
+
+App::uses('ReportableBehavior', 'Problem.Model/Behavior');
 
 class ProblematicArticle extends CakeTestModel {
 	public $name = 'ProblematicArticle';
@@ -105,20 +106,19 @@ class ReportableTest extends CakeTestCase {
 		unset($this->Article->mockAfterReport['savedData']['Problem']['modified']);
 
 		$expected = array(
-			'id' => 1,
 			'originalData' => $data,
 			'savedData' => array(
 				'Problem' => array(
 					'model' => 'ProblematicArticle',
-					'offensive' => 0,
-					'request_to_edit' => 0,
+					'offensive' => '0',
+					'request_to_edit' => '0',
 					'user_id' => 1,
 					'foreign_key' => 1,
 					'description' => 'My problem'
 				)
 			)
 		);
-
+		unset($this->Article->mockAfterReport['id'], $this->Article->mockAfterReport['savedData']['Problem']['id']);
 		$this->assertEquals($expected, $this->Article->mockAfterReport);
 		$this->assertFalse(empty($this->Article->Problem->id));
 	}
