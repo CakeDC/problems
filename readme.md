@@ -74,7 +74,9 @@ For example:
 
 ## Customization ##
 
-Additionally the behavior provides two callbacks to implement in your model:
+### Behavior callbacks ###
+
+Additionally the behavior provides three callbacks to implement in your model:
 1. beforeReport: Implement this function in your model to make decission to allow report about the problem before a data about reported recorded
 2. afterReport: Implement this function in your model to take specific actions after a model record is reported
 3. afterAcceptReport: Implement this function in your model to take specific actions after a problem report is marked as accepted for a model record, for example delete the entry in the database
@@ -85,6 +87,19 @@ You can customize this links implementing this method in your model:
 	public function reportedObjectUrl($id) {
 		return array('controller' => 'my_controller', 'action' => 'view', $id);
 	}
+
+### Flash message improvement ###
+
+You can add options to Session::setFlash message in case of success or error of action.
+To do this, add 'Problems.flashTypes' to your config file.
+For exemple, to use an element 'error.ctp' for wraping error flash messages  and use 'Problems' as flash key add to your bootstrap:
+
+	Configure::write('Problems.flashTypes', array(
+		'error' => array('error', array(), 'Problems'),
+	));
+
+Allowed key are 'success' and 'error'.
+For parameters, see  the documentation of Session::setFlash.
 
 ## Requirements ##
 
