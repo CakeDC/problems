@@ -38,6 +38,11 @@ class ProblemsController extends AppController {
  */
 	public $helpers = array('Html', 'Form', 'Time', 'Text');
 	
+	public $flashTypes = array(
+		'error' => array(),
+		'success' => array(),
+	);
+
 /**
  * Before filter callback
  * Restricts the add and edit actions to logged in users only
@@ -47,6 +52,11 @@ class ProblemsController extends AppController {
 	public function beforeFilter() {
 		parent::beforeFilter();
 		$this->Auth->deny('add', 'edit');
+
+		$appTypes = Configure::read('Problems.flashTypes');
+		if (!empty($appTypes) && is_array($appTypes)) {
+			$this->flashTypes = $appTypes + $this->flashTypes;
+		}
 	}
 
 /**
@@ -315,5 +325,23 @@ class ProblemsController extends AppController {
 			$this->redirect($this->referer('/'));
 		}
 		$this->redirect(ClassRegistry::init($model)->reportedObjectUrl($foreignKey));
+	}
+
+/**
+ * Used to set a session variable that can be used to output messages in the view.
+ * Use the flashTypes paramsto set additionals parameters to Session::setFlash
+ *
+ * @param string $message Message to be flashed
+ * @param string $type The type of flash message (success or error)
+ */
+	protected function _setFlash($message, $type = 'success') {
+		if (!empty($this->flashTypes[$type])) {
+			call_user_func_array(
+				array($this->Session, 'setFlash'),
+				array_merge(array($message), $this->flashTypes[$type])
+			);
+		} else {
+			$this->Session->setFlash($message);
+		}
 	}
 }
