@@ -80,16 +80,16 @@ class ProblemsController extends AppController {
 			
 			$result = $this->{$model}->report($foreignKey, $this->Auth->user('id'), $this->data);
 			if ($result === true) {
-				$this->Session->setFlash(__d('problems', 'The problem has been saved', true));
+				$this->_setFlash(__d('problems', 'The problem has been saved', true), 'success');
 				$this->Referer->redirect('/');
 			}
 		} catch (OutOfBoundsException $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 		} catch (LogicException $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->Referer->redirect('/');
 		} catch (Exception $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect('/');
 		}
 
@@ -110,7 +110,7 @@ class ProblemsController extends AppController {
 			$result = $this->{$model}->Problem->edit($id, $this->Auth->user('id'), $this->data);
 			if ($result === true) {
 				$foreignKey = $this->Problem->data['Problem']['foreign_key'];
-				$this->Session->setFlash(__d('problems', 'Problem saved', true));
+				$this->_setFlash(__d('problems', 'Problem saved', true), 'success');
 				$this->Referer->redirect('/');				
 			} else {
 				$this->data = $this->Problem->data;
@@ -118,7 +118,7 @@ class ProblemsController extends AppController {
 				$model = $this->data['Problem']['model'];
 			}
 		} catch (OutOfBoundsException $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect('/');
 		}
 		$this->set('type', strtolower($model));
@@ -153,7 +153,7 @@ class ProblemsController extends AppController {
 			$problem = $this->Problem->view($id);
 			$foreignKey = $problem['Problem']['foreign_key'];
 		} catch (OutOfBoundsException $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect('/');
 		}
 		$this->set(compact('problem', 'foreignKey'));
@@ -170,10 +170,10 @@ class ProblemsController extends AppController {
 			$model = Inflector::classify($problem['Problem']['model']);
 			$this->{$model} = ClassRegistry::init(Configure::read('Problems.Models.' . $model));
 			if ($this->{$model}->Problem->edit($id, $this->Auth->user('id'), $this->data)) {
-				$this->Session->setFlash(__d('problems', 'Problem saved', true));
+				$this->_setFlash(__d('problems', 'Problem saved', true), 'success');
 			}
 		} catch (OutOfBoundsException $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect('/');
 		}
 
@@ -196,11 +196,11 @@ class ProblemsController extends AppController {
 			$this->set(compact('foreignKey')); 
 			$result = $this->Problem->validateAndDelete($id, $this->Auth->user('id'), $this->data);
 			if ($result === true) {
-				$this->Session->setFlash(__d('problems', 'Problem deleted', true));
+				$this->_setFlash(__d('problems', 'Problem deleted', true), 'success');
 				$this->redirect(array('action' => 'index', $model));
 			}
 		} catch (Exception $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect('/');
 		}
 
@@ -243,13 +243,13 @@ class ProblemsController extends AppController {
 			}
 			$result = ClassRegistry::init($model)->acceptReport($id);
 		} catch (OutOfBoundsException $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect('/');
 		} catch (Exception $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect($this->referer('/'));
 		}
-		$this->Session->setFlash(__d('problems', 'Problem report was accepted', true));
+		$this->_setFlash(__d('problems', 'Problem report was accepted', true), 'success');
 		$this->redirect($this->referer('/'));
 	}
 
@@ -262,13 +262,13 @@ class ProblemsController extends AppController {
 		try {
 			$result = $this->Problem->accept($id, false);
 		} catch (OutOfBoundsException $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect('/');
 		} catch (Exception $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect($this->referer('/'));
 		}
-		$this->Session->setFlash(__d('problems', 'Problem report was unaccepted', true));
+		$this->_setFlash(__d('problems', 'Problem report was unaccepted', true), 'success');
 		$this->redirect($this->referer('/'));
 	}
 
@@ -282,14 +282,14 @@ class ProblemsController extends AppController {
 		try {
 			$result = $this->Problem->acceptAll($objectType, $foreignKey, true);
 		} catch (OutOfBoundsException $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect('/');
 		} catch (Exception $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect($this->referer('/'));
 		}
 
-		$this->Session->setFlash(__d('problems', 'Problem reports were accepted', true));
+		$this->_setFlash(__d('problems', 'Problem reports were accepted', true), 'success');
 		$this->redirect($this->referer('/'));
 	}
 
@@ -303,14 +303,14 @@ class ProblemsController extends AppController {
 		try {
 			$result = $this->Problem->acceptAll($objectType, $foreignKey, false);
 		} catch (OutOfBoundsException $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect('/');
 		} catch (Exception $e) {
-			$this->Session->setFlash($e->getMessage());
+			$this->_setFlash($e->getMessage(), 'error');
 			$this->redirect($this->referer('/'));
 		}
 
-		$this->Session->setFlash(__d('problems', 'Problem reports were unaccepted', true));
+		$this->_setFlash(__d('problems', 'Problem reports were unaccepted', true), 'success');
 		$this->redirect($this->referer('/'));
 	}
 
