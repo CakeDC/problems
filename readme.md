@@ -20,8 +20,8 @@ Place the problems folder into any of your plugin directories for your app (for 
 
 Create database tables using either the schema shell or the migrations plugin:
 
-	cake schema create -plugin problems -name problems
-	cake migration run all -plugin problems
+	cake schema create --plugin Problems --name problems
+	cake migration run all --plugin Problems
 
 ### 3. Attach `Reportable` behavior to models ###
 
