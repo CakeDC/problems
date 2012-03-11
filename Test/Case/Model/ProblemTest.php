@@ -16,6 +16,7 @@
  */
 
 App::uses('ReportableBehavior', 'Problem.Model/Behavior');
+App::uses('Model', 'Model');
 
 if (!class_exists('ProblematicArticle')) {
 	class ProblematicArticle extends Model {
