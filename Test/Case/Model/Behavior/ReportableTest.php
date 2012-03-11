@@ -23,7 +23,7 @@ class ProblematicArticle extends CakeTestModel {
 	public $useTable = 'problematic_articles';
 	public $actsAs = array('Problems.Reportable' => array(
 		'userClass' => 'ProblemTestUser',
-		'problemTypes' => array('spam' => 'Spam', 'stolen' => 'Stolen Content')
+		'problemTypes' => array('spam' => 'Spam', 'stolen' => 'Stolen Content', 'other' => 'Other')
 	));
 
 	public function afterReport($id, $originalData, $savedData) {
@@ -59,7 +59,9 @@ class ReportableTest extends CakeTestCase {
 	public $fixtures = array(
 		'plugin.problems.problematic_article',
 		'plugin.problems.problem',
-		'core.user');
+		'plugin.users.user',
+		'plugin.users.detail'
+		);
 
 /**
  * Method executed before each test
@@ -88,7 +90,7 @@ class ReportableTest extends CakeTestCase {
 		$this->assertTrue(is_a($this->Article->Problem->ProblematicArticle, 'ProblematicArticle'));
 		$settings = $this->Article->Behaviors->Reportable->settings['ProblematicArticle'];
 		
-		$expected = array('spam' => 'Spam', 'stolen' => 'Stolen Content');
+		$expected = array('spam' => 'Spam', 'stolen' => 'Stolen Content', 'other' => 'Other');
 		$this->assertEquals($expected, $settings['problemTypes']);
 		$this->assertEquals($expected, $this->Article->Problem->types);
 	}
