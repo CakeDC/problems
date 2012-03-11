@@ -80,4 +80,3 @@ class ProblemFixture extends CakeTestFixture {
 	);
 
 }
-?>

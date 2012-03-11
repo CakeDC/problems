@@ -9,6 +9,8 @@
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppModel', 'Model');
+
 /**
  * Problem Model
  *
@@ -51,14 +53,28 @@ class Problem extends AppModel {
  *
  * @var array
  */
-	public $validate = array();
+	public $validate = array(
+		'user_id' => array(
+			'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => 'Please enter a User')
+		),
+		'foreign_key' => array(
+			'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => 'Please select item')
+		),
+		'type' => array(
+			'inList' => array('rule' => array('validType'), 'required' => false, 'allowEmpty' => true, 'message' => 'Please enter a valid problem type')
+		),
+		'description' => array(
+			'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => 'Please enter a description of the problem.')
+		),
+	);
+
 
 /**
  * Custom find methods to use
  *
  * @var array
  */
-	public $_findMethods = array('totals' => true);
+	public $findMethods = array('totals' => true);
 
 /**
  * Constructor
@@ -69,29 +85,18 @@ class Problem extends AppModel {
  */
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
-		$this->validate = array(
-			'user_id' => array(
-				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please enter a User', true))),
-			'foreign_key' => array(
-				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please select item', true))),
-			'type' => array(
-				'inList' => array('rule' => array('validType'), 'required' => false, 'allowEmpty' => true, 'message' => __d('problems', 'Please enter a valid problem type', true))),
-			'description' => array(
-				'notempty' => array('rule' => array('notempty'), 'required' => true, 'allowEmpty' => false, 'message' => __d('problems', 'Please enter a description of the problem.', true))),
-			'offensive' => array(
-				'boolean' => array('rule' => array('numeric'), 'required' => true, 'allowEmpty' => false)));
 
 		$this->offensiveStatuses = array(
-			-1 => __d('problems', 'Ignore', true),
-			0 => __d('problems', 'No', true),
-			1 => __d('problems', 'Yes', true));
+			-1 => __d('problems', 'Ignore'),
+			0 => __d('problems', 'No'),
+			1 => __d('problems', 'Yes'));
 
 		$this->types = array(
-			'spam' => __d('problems', 'Spam', true),
-			'sexual' => __d('problems', 'Sexual Content', true),
-			'insult_racism' => __d('problems', 'Insult/Racism', true),
-			'stolen' => __d('problems', 'Stolen Content', true),
-			'other' => __d('problems', 'Other', true));
+			'spam' => __d('problems', 'Spam'),
+			'sexual' => __d('problems', 'Sexual Content'),
+			'insult_racism' => __d('problems', 'Insult/Racism'),
+			'stolen' => __d('problems', 'Stolen Content'),
+			'other' => __d('problems', 'Other'));
 	}
 
 /**
@@ -104,7 +109,7 @@ class Problem extends AppModel {
  */
 	public function add($model, $foreignKey = null, $userId = null, $data = null) {
 		if (!in_array($model, $this->modelTypes)) {
-			throw new OutOfBoundsException(__d('problems', 'Could not save the Problem of unallowed type.', true));;
+			throw new OutOfBoundsException(__d('problems', 'Could not save the Problem of unallowed type.'));;
 		}
 
 		$options = array(
@@ -120,7 +125,7 @@ class Problem extends AppModel {
 
 		if (!empty($problem) && !empty($data['Problem']['type'])) {
 			$objectHumanName = Inflector::humanize(Inflector::underscore($model));
-			throw new LogicException(sprintf(__d('problems', 'You have already reported this %s!', true), __(low($objectHumanName), true)));
+			throw new LogicException(sprintf(__d('problems', 'You have already reported this %s!'), __(strtolower($objectHumanName))));
 		}
 
 		if (!empty($data)) {
@@ -133,7 +138,7 @@ class Problem extends AppModel {
 				$this->data = array_merge($data, $result);
 				return true;
 			} else {
-				throw new OutOfBoundsException(__d('problems', 'Could not save the Problem, please check your inputs.', true));
+				throw new OutOfBoundsException(__d('problems', 'Could not save the Problem, please check your inputs.'));
 			}
 			return $return;
 		}
@@ -159,7 +164,7 @@ class Problem extends AppModel {
 		$problem = $this->find('first', $options);
 
 		if (empty($problem)) {
-			throw new OutOfBoundsException(__d('problems', 'Invalid Problem', true));
+			throw new OutOfBoundsException(__d('problems', 'Invalid Problem'));
 		}
 
 		$this->set($problem);
@@ -192,7 +197,7 @@ class Problem extends AppModel {
 				"{$this->alias}.id" => $id)));
 
 		if (empty($problem)) {
-			throw new OutOfBoundsException(__d('problems', 'Invalid Problem', true));
+			throw new OutOfBoundsException(__d('problems', 'Invalid Problem'));
 		}
 
 		return $problem;
@@ -203,7 +208,7 @@ class Problem extends AppModel {
  *
  * @param string $id, problem id
  * @param string $userId, user id
- * @param array $data, controller post data usually $this->data
+ * @param array $data, controller post data usually $this->request->data
  * @return boolean True on success
  */
 	public function validateAndDelete($id = null, $userId = null, $data = array()) {
@@ -213,7 +218,7 @@ class Problem extends AppModel {
 		$problem = $this->find('first', compact('conditions')); 
 
 		if (empty($problem)) {
-			throw new OutOfBoundsException(__d('problems', 'Invalid Problem', true));
+			throw new OutOfBoundsException(__d('problems', 'Invalid Problem'));
 		}
 
 		$this->data['problem'] = $problem;
@@ -231,7 +236,7 @@ class Problem extends AppModel {
 				}
 			}
 			$this->validate = $tmp;
-			throw new Exception(__d('problems', 'You need to confirm to delete this Problem', true));
+			throw new BadMethodCallException(__d('problems', 'You need to confirm to delete this Problem'));
 		}
 	}
 
@@ -244,7 +249,7 @@ class Problem extends AppModel {
  */
 	public function accept($id, $accept = true) {
 		$data = array($this->alias => array('accepted' => $accept));
-		return $this->edit($id, false, $data);
+		return (bool) $this->edit($id, false, $data);
 	}
 
 /**
@@ -264,7 +269,7 @@ class Problem extends AppModel {
 		}
 		
 		if (!$actualModel->Behaviors->enabled('Reportable')) {
-			throw new OutOfBoundsException(__d('problems', 'Invalid object type for problem report', true));
+			throw new OutOfBoundsException(__d('problems', 'Invalid object type for problem report'));
 		}
 
 		$sample = $this->find('first', array(
@@ -304,7 +309,7 @@ class Problem extends AppModel {
  * @param array $results
  * @return mixed array for $state before containning the query, results when state is after
  */
-	public function _findTotals($state, $query, $results = array()) {
+	protected function _findTotals($state, $query, $results = array()) {
 		if ($state == 'before') {
 			if (!empty($query['operation']) && $query['operation'] === 'count') {
 				unset($query['limit']);
@@ -361,7 +366,7 @@ class Problem extends AppModel {
 			if (!empty($result[$model][$this->{$model}->displayField])) {
 				$result[$this->alias]['object_title'] = $result[$model][$this->{$model}->displayField];
 			} else {
-				$result[$this->alias]['object_title'] = __d('problems', 'Unknown', true);
+				$result[$this->alias]['object_title'] = __d('problems', 'Unknown');
 			}
 		}
 		return $results;

@@ -14,9 +14,10 @@
  * @package   plugins.problems.tests.cases.behaviors
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Behavior', 'Problems.Reportable');
 
-class ProblematicArticle extends Model {
+App::uses('ReportableBehavior', 'Problem.Model/Behavior');
+
+class ProblematicArticle extends CakeTestModel {
 	public $name = 'ProblematicArticle';
 	public $alias = 'ProblematicArticle';
 	public $useTable = 'problematic_articles';
@@ -38,7 +39,7 @@ class ProblematicArticle extends Model {
 	}
 }
 
-class ProblemTestUser extends Model {
+class ProblemTestUser extends CakeTestModel {
 	public $name = 'User';
 	public $useTable = 'users';
 }
@@ -49,7 +50,6 @@ class ReportableTest extends CakeTestCase {
  * Holds the instance of the model
  *
  * @var mixed
- * @access public
  */
 	public $Article = null;
 
@@ -64,9 +64,8 @@ class ReportableTest extends CakeTestCase {
 /**
  * Method executed before each test
  *
- * @access public
  */
-	public function startTest() {
+	public function setUp() {
 		Configure::write('Problems.Models', array('ProblematicArticle' => 'ProblematicArticle'));
 		$this->Article = ClassRegistry::init('ProblematicArticle');
 	}
@@ -74,9 +73,8 @@ class ReportableTest extends CakeTestCase {
 /**
  * Method executed after each test
  *
- * @access public
  */
-	public function endTest() {
+	public function tearDown() {
 		unset($this->Article);
 		ClassRegistry::flush();
 	}
@@ -84,7 +82,6 @@ class ReportableTest extends CakeTestCase {
 /**
  * Tests that the behavior sets up the binds correctly
  *
- * @access public
  */
 	public function testSetup() {
 		$this->assertTrue(is_a($this->Article->Problem, 'Problem'));
@@ -92,14 +89,13 @@ class ReportableTest extends CakeTestCase {
 		$settings = $this->Article->Behaviors->Reportable->settings['ProblematicArticle'];
 		
 		$expected = array('spam' => 'Spam', 'stolen' => 'Stolen Content');
-		$this->assertEqual($expected, $settings['problemTypes']);
-		$this->assertEqual($expected, $this->Article->Problem->types);
+		$this->assertEquals($expected, $settings['problemTypes']);
+		$this->assertEquals($expected, $this->Article->Problem->types);
 	}
 
 /**
  * Tests report method
  *
- * @access public
  */
 	public function testReport() {
 		$data = array('Problem' => array('description' => 'My problem'));
@@ -110,28 +106,26 @@ class ReportableTest extends CakeTestCase {
 		unset($this->Article->mockAfterReport['savedData']['Problem']['modified']);
 
 		$expected = array(
-			'id' => 1,
 			'originalData' => $data,
 			'savedData' => array(
 				'Problem' => array(
 					'model' => 'ProblematicArticle',
-					'offensive' => 0,
-					'request_to_edit' => 0,
+					'offensive' => '0',
+					'request_to_edit' => '0',
 					'user_id' => 1,
 					'foreign_key' => 1,
 					'description' => 'My problem'
 				)
 			)
 		);
-
-		$this->assertEqual($expected, $this->Article->mockAfterReport);
+		unset($this->Article->mockAfterReport['id'], $this->Article->mockAfterReport['savedData']['Problem']['id']);
+		$this->assertEquals($expected, $this->Article->mockAfterReport);
 		$this->assertFalse(empty($this->Article->Problem->id));
 	}
 
 /**
  * Tests acceptReport method
  *
- * @access public
  */
 	public function testAcceptReport() {
 		$data = array('Problem' => array('description' => 'My problem'));
@@ -141,31 +135,38 @@ class ReportableTest extends CakeTestCase {
 		$result = $this->Article->acceptReport($id);
 		$this->assertTrue($result);
 		$expected = array(
-			'reportId' => $id,
-			'data' => array(
-				'Problem' => array(
-				  'id' => $id,
-			      'model' => 'ProblematicArticle',
-			      'foreign_key' => '1',
-			      'user_id' => '1',
-			      'type' => NULL,
-			      'description' => 'My problem',
-			      'offensive' => false,
-			      'request_to_edit' => false,
-			      'accepted' => true)));
+			'Problem' => array(
+				'id' => $id,
+				'model' => 'ProblematicArticle',
+				'foreign_key' => '1',
+				'user_id' => '1',
+				'type' => NULL,
+				'description' => 'My problem',
+				'offensive' => 0,
+				'request_to_edit' => 0,
+				'accepted' => 1
+			)
+		);
 
 		unset($this->Article->mockAfterAcceptReport['data']['Problem']['modified']);
 		unset($this->Article->mockAfterAcceptReport['data']['Problem']['created']);
-		unset($this->Article->mockAfterAcceptReport['data']['User']);
-
 		unset($this->Article->mockAfterAcceptReport['data']['Problem']['object_title']);
-		$this->assertEqual($this->Article->mockAfterAcceptReport, $expected);
+
+		$this->assertEquals($this->Article->mockAfterAcceptReport['reportId'], $id);
+		$this->assertEquals($expected['Problem']['id'], $this->Article->mockAfterAcceptReport['data']['Problem']['id']);
+		$this->assertEquals($expected['Problem']['model'], $this->Article->mockAfterAcceptReport['data']['Problem']['model']);
+		$this->assertEquals($expected['Problem']['foreign_key'], $this->Article->mockAfterAcceptReport['data']['Problem']['foreign_key']);
+		$this->assertEquals($expected['Problem']['user_id'], $this->Article->mockAfterAcceptReport['data']['Problem']['user_id']);
+		$this->assertNull($expected['Problem']['type']);
+		$this->assertEquals($expected['Problem']['description'], $this->Article->mockAfterAcceptReport['data']['Problem']['description']);
+		$this->assertEquals($expected['Problem']['offensive'], 0);
+		$this->assertEquals($expected['Problem']['request_to_edit'], 0);
+		$this->assertEquals($expected['Problem']['accepted'], 1);
 	}
 	
 /**
  * Tests unAcceptReport method
  *
- * @access public
  */
 	public function testUnAcceptReport() {
 		$data = array('Problem' => array('description' => 'My problem'));
@@ -175,7 +176,7 @@ class ReportableTest extends CakeTestCase {
 		$result = $this->Article->unAcceptReport($id);
 		$this->assertTrue($result);
 		$expected = array('reportId' => $id);
-		$this->assertEqual($this->Article->mockAfterUnAcceptReport, $expected);
+		$this->assertEquals($this->Article->mockAfterUnAcceptReport, $expected);
 	}
 
 }

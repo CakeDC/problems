@@ -14,21 +14,21 @@
  * @package   plugins.problems.test.cases.models
  * @license   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Behavior', 'Problem.Reportable');
 
+App::uses('ReportableBehavior', 'Problem.Model/Behavior');
 
-class ProblematicArticle extends Model {
+class ProblematicArticle extends CakeTestModel {
 	public $name = 'ProblematicArticle';
 	public $actsAs = array('Problems.Reportable' => array('userClass' => 'ProblemModelUser'));
 }
 
-class ProblemModelUser extends Model {
+class ProblemModelUser extends CakeTestModel {
 	public $name = 'User';
 	public $useTable = 'users';
 }
 /* Problem Test cases generated on: 2010-03-10 12:03:14 : 1268219054*/
 
-class ProblemTestCase extends CakeTestCase {
+class ProblemTest extends CakeTestCase {
 
 /**
  * Fixtures
@@ -45,14 +45,12 @@ class ProblemTestCase extends CakeTestCase {
 
 
 /**
- * Start Test callback
+ * Setup method
  *
- * @param string $method
  * @return void
  * @access public
  */
-	public function startTest($method) {
-		parent::startTest($method);
+	public function setUp() {
 		Configure::write('Problems.Models', array('ProblematicArticle' => 'ProblematicArticle'));
 		$this->Problem = ClassRegistry::init('Problems.Problem');
 		$this->Problem->modelTypes = array('ProblematicArticle');
@@ -62,14 +60,12 @@ class ProblemTestCase extends CakeTestCase {
 	}
 
 /**
- * End Test callback
+ * tearDown method
  *
- * @param string $method
  * @return void
  * @access public
  */
-	public function endTest($method) {
-		parent::endTest($method);
+	public function tearDown() {
 		unset($this->Problem);
 		ClassRegistry::flush();
 	}
@@ -77,10 +73,10 @@ class ProblemTestCase extends CakeTestCase {
 /**
  * Test adding a Problem
  *
- * @return void
+ * @expectedException OutOfBoundsException
  * @access public
  */
-	public function testAdd() {
+	public function testAddBadData() {
 		$userId = 3;
 		$data = $this->record;
 		unset($data['Problem']['id']);
@@ -91,33 +87,29 @@ class ProblemTestCase extends CakeTestCase {
 
 		$this->assertEqual($data['Problem']['model'], 'ProblematicArticle');
 		$this->assertEqual($data['Problem']['foreign_key'], 'article-1');
-
-		try {
-			$data = $this->record;
-			unset($data['Problem']['id']);
-			$data['Problem']['description'] = null;
-			$result = $this->Problem->add('ProblematicArticle', 'article-1', 4, $data);
-			$this->fail('No exception');
-		} catch (OutOfBoundsException $e) {
-			$this->pass('Correct exception thrown');
-		}
-
-		try {
-			$data = $this->record;
-			unset($data['Problem']['id']);
-			$result = $this->Problem->add('ProblematicArticle', 'article-1', $userId, $data);
-			$this->fail('No exception');
-		} catch (LogicException $e) {
-			$this->pass('Correct exception thrown');
-		}
-
+		$data = $this->record;
+		unset($data['Problem']['id']);
+		$data['Problem']['description'] = null;
+		$result = $this->Problem->add('ProblematicArticle', 'article-1', 4, $data);
 	}
 
 /**
- * Test editing a  Problem
+ * Tests that adding a duplicate report throws an exception
  *
- * @return void
- * @access public
+ * @expectedException LogicException
+ */
+	public function testAddDuplicatedReport() {
+		$data = $this->record;
+		$userId = 3;
+		unset($data['Problem']['id']);
+		$result = $this->Problem->add('ProblematicArticle', 'article-1', $userId, $data);
+		$this->Problem->add('ProblematicArticle', 'article-1', $userId, $data);
+	}
+
+/**
+ * Test editing a Problem
+ *
+ * @expectedException OutOfBoundsException
  */
 	public function testEdit() {
 		$userId = '1';
@@ -136,95 +128,84 @@ class ProblemTestCase extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = $this->Problem->read(null, 1);
-
-		try {
-			$this->Problem->edit('wrong_id', $userId, $data);
-			$this->fail('No exception');
-		} catch (OutOfBoundsException $e) {
-			$this->pass('Correct exception thrown');
-		}
+		$this->Problem->edit('wrong_id', $userId, $data);
 	}
 
 /**
  * Test viewing a single  Problem
  *
- * @return void
- * @access public
+ * @expectedException OutOfBoundsException
  */
-	public function testView() {
+	public function testViewNotFound() {
 		$result = $this->Problem->view(2);
 		$this->assertTrue(isset($result['Problem']));
 		$this->assertEqual($result['Problem']['id'], 2);
-		//$this->assertEqual($result['ProblematicArticle']['title'], 'Article 1 title');
-
-		try {
-			$result = $this->Problem->view('wrong_id');
-			$this->fail('No exception on wrong id');
-		} catch (OutOfBoundsException $e) {
-			$this->pass('Correct exception thrown');
-		}
+		$result = $this->Problem->view('wrong_id');
 	}
 
 /**
- * Test ValidateAndDelete method for a  Problem
+ * Test ValidateAndDelete method for an invalid Problem
  *
- * @return void
- * @access public
+ * @expectedException OutOfBoundsException
+ */
+	public function testValidateAndDeleteInvalid() {
+		$userId = '1';
+		$postData = array();
+		$this->Problem->validateAndDelete('invalidProblemId', $userId, $postData);
+	}
+
+/**
+ * Test validateAndDelete with no confirmation sent by the user
+ *
+ * @expectedException BadMethodCallException
+ */
+	public function testValidateAndDeleteNoConfirmation() {
+		$userId = '1';
+		$postData = array(
+			'Problem' => array(
+				'confirm' => 0
+			)
+		);
+		$result = $this->Problem->validateAndDelete(1, $userId, $postData);
+	}
+
+/**
+ * Test validateAndDelete with confirmation
+ *
  */
 	public function testValidateAndDelete() {
 		$userId = '1';
-		try {
-			$postData = array();
-			$this->Problem->validateAndDelete('invalidProblemId', $userId, $postData);
-		} catch (OutOfBoundsException $e) {
-			$this->assertEqual($e->getMessage(), 'Invalid Problem');
-		}
-		try {
-			$postData = array(
-				'Problem' => array(
-					'confirm' => 0));
-			$result = $this->Problem->validateAndDelete(1, $userId, $postData);
-		} catch (Exception $e) {
-			$this->assertEqual($e->getMessage(), 'You need to confirm to delete this Problem');
-		}
-
 		$postData = array(
 			'Problem' => array(
-				'confirm' => 1));
+				'confirm' => 1
+			)
+		);
 		$result = $this->Problem->validateAndDelete(1, $userId, $postData);
 		$this->assertTrue($result);
 	}
+	
 
 /**
  * Tests accept method
  *
- * @return void
- * @access public
+ * @expectedException OutOfBoundsException
  */
 	public function testAccept() {
-		$userId = '1';
 		$result = $this->Problem->field('accepted', array('id' => 1));
-		$this->assertFalse($result);
-		$this->assertTrue($this->Problem->accept(1, $userId));
+		$this->assertNull($result);
+		$this->assertTrue($this->Problem->accept(1));
 		$result = $this->Problem->field('accepted', array('id' => 1));
-		$this->assertTrue($result);
+		$this->assertTrue((bool)$result);
 		
 		$this->assertTrue($this->Problem->accept(1, false));
 		$result = $this->Problem->field('accepted', array('id' => 1));
-		$this->assertFalse($result);
-
-		try {
-			$this->Problem->accept('WROG_ID', $userId);
-		} catch (OutOfBoundsException $e){
-			$this->assertEqual($e->getMessage(), 'Invalid Problem');
-		}
+		$this->assertFalse((bool)$result);
+		$this->Problem->accept('WROG_ID');
 	}
 
 /**
  * Tests acceptAll method
  *
- * @return void
- * @access public
  */
 	public function testAcceptAll() {
 		$data = $this->record;
@@ -249,8 +230,6 @@ class ProblemTestCase extends CakeTestCase {
 /**
  * Tests find('totals') method
  *
- * @return void
- * @access public
  */
 	public function testFindTotals() {
 		$data = $this->record;
